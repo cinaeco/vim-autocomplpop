@@ -139,6 +139,7 @@ endfunction
 call s:defineVariableDefault('acp_enableAtStartup', 1)
 call s:defineVariableDefault('acp_mappingDriven', 0)
 call s:defineVariableDefault('acp_ignorecaseOption', 1)
+call s:defineVariableDefault('acp_autoselectFirstCompletion', 1)
 call s:defineVariableDefault('acp_completeOption', '.,w,b,k')
 call s:defineVariableDefault('acp_completeoptPreview', 0)
 call s:defineVariableDefault('acp_behaviorUserDefinedFunction', '')
