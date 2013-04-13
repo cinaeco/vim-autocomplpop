@@ -122,8 +122,17 @@ endfunction
 
 "
 function acp#meetsForPythonOmni(context)
-  return has('python') && g:acp_behaviorPythonOmniLength >= 0 &&
-        \ a:context =~ '\k\.\k\{' . g:acp_behaviorPythonOmniLength . ',}$'
+  if !has('python') || g:acp_behaviorPythonOmniLength < 0
+    return 0
+  endif
+  if g:acp_behaviorPythonOmniLength == 0
+    return 1
+  endif
+  let matches = matchlist(a:context, '\(\(\k\|\.\|(\)\{' . g:acp_behaviorPythonOmniLength . ',}\)$')
+  if empty(matches)
+    return 0
+  endif
+  return 1
 endfunction
 
 "
