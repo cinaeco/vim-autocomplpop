@@ -238,6 +238,7 @@ function acp#onPopupPost()
   let s:iBehavs += 1
   if len(s:behavsCurrent) > s:iBehavs 
     call s:setCompletefunc()
+    call acp#pum_color_and_map_adaptions(0)
     return printf("\<C-e>%s\<C-r>=acp#onPopupPost()\<CR>",
           \       s:behavsCurrent[s:iBehavs].command)
   else
@@ -248,6 +249,33 @@ function acp#onPopupPost()
     call s:finishPopup(0)
     return "\<C-e>"
   endif
+endfunction
+
+function acp#pum_color_and_map_adaptions(force_direction)
+    " force_direction
+    " 0 : no forcing, command conditional acp selection
+    " 1 : force forward
+    " 2 : force reverse
+    let l:direction = a:force_direction
+    if a:force_direction == 0
+        if s:behavsCurrent[s:iBehavs].command =~? "\<C-p>"
+            let l:direction = 2
+        else
+            let l:direction = 1
+        endif
+    endif
+    if l:direction == 1
+        inoremap <TAB> <C-R>=pumvisible() ? "\<lt>C-N>" : "\<lt>TAB>"<CR>
+        inoremap <S-TAB> <C-R>=pumvisible() ? "\<lt>C-P>" : "\<lt>S-TAB>"<CR>
+        hi! link Pmenu AcpCompletionColorForward
+    elseif l:direction == 2
+        inoremap <TAB> <C-R>=pumvisible() ? "\<lt>C-P>" : "\<lt>TAB>"<CR>
+        inoremap <S-TAB> <C-R>=pumvisible() ? "\<lt>C-N>" : "\<lt>S-TAB>"<CR>
+        hi! link Pmenu AcpCompletionColorReverse
+    else
+        throw "acp: color/map adaption: Invalid direction argument"
+    endif
+    return ''
 endfunction
 
 "
@@ -409,6 +437,9 @@ function s:feedPopup()
   " NOTE: 'textwidth' must be restored after <C-e>.
   call acp#tempvariables#set(s:TEMP_VARIABLES_GROUP1,
         \ '&textwidth', 0)
+
+  call acp#pum_color_and_map_adaptions(0)
+
   call s:setCompletefunc()
   call feedkeys(s:behavsCurrent[s:iBehavs].command . "\<C-r>=acp#onPopupPost()\<CR>", 'n')
   return '' " this function is called by <C-r>=
