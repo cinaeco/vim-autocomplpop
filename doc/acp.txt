@@ -164,6 +164,22 @@ OPTIONS                                                          *acp-options*
 <
         The color to use for the background when doing reverse completion.
 
+                                                 *g:acp_nextItem*  >
+  let g:acp_nextItem = ['<TAB>', '\<lt>TAB>']
+<
+        How to select the next item.  A list of two items where the first item
+        is the actual mapping, and the second an expression of what to do when
+        the popup menu is not open.  It requires escaping according to
+        *popupmenu-keys* (see pumvisible())
+
+                                                 *g:acp_previousItem*  >
+  let g:acp_previousItem = ['<S-TAB>', '\<lt>S-TAB>']
+<
+        How to select the previous item.  A list of two items where the first
+        item is the actual mapping, and the second an expression of what to do
+        when the popup menu is not open.  It requires escaping according to
+        *popupmenu-keys* (see pumvisible())
+
                                         *g:acp_behaviorUserDefinedFunction*  >
   let g:acp_behaviorUserDefinedFunction = ''
 <

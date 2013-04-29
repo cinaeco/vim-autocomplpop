@@ -265,12 +265,20 @@ function acp#pum_color_and_map_adaptions(force_direction)
         endif
     endif
     if l:direction == 1
-        inoremap <TAB> <C-R>=pumvisible() ? "\<lt>C-N>" : "\<lt>TAB>"<CR>
-        inoremap <S-TAB> <C-R>=pumvisible() ? "\<lt>C-P>" : "\<lt>S-TAB>"<CR>
+        execute 'inoremap ' . g:acp_nextItemMapping[0]
+                    \ . ' <C-R>=pumvisible() ? "\<lt>C-N>" : "'
+                    \ . g:acp_nextItemMapping[1] . '"<CR>'
+        execute 'inoremap ' . g:acp_previousItemMapping[0]
+                    \ . ' <C-R>=pumvisible() ? "\<lt>C-P>" : "'
+                    \ . g:acp_previousItemMapping[1] . '"<CR>'
         execute "hi! link Pmenu " . g:acp_colorForward
     elseif l:direction == 2
-        inoremap <TAB> <C-R>=pumvisible() ? "\<lt>C-P>" : "\<lt>TAB>"<CR>
-        inoremap <S-TAB> <C-R>=pumvisible() ? "\<lt>C-N>" : "\<lt>S-TAB>"<CR>
+        execute 'inoremap ' . g:acp_nextItemMapping[0]
+                    \ . ' <C-R>=pumvisible() ? "\<lt>C-P>" : "'
+                    \ . g:acp_nextItemMapping[1] . '"<CR>'
+        execute 'inoremap ' . g:acp_previousItemMapping[0]
+                    \ . ' <C-R>=pumvisible() ? "\<lt>C-N>" : "'
+                    \ . g:acp_previousItemMapping[1] . '"<CR>'
         execute "hi! link Pmenu " . g:acp_colorReverse
     else
         throw "acp: color/map adaption: Invalid direction argument"
