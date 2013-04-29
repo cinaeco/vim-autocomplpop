@@ -267,11 +267,11 @@ function acp#pum_color_and_map_adaptions(force_direction)
     if l:direction == 1
         inoremap <TAB> <C-R>=pumvisible() ? "\<lt>C-N>" : "\<lt>TAB>"<CR>
         inoremap <S-TAB> <C-R>=pumvisible() ? "\<lt>C-P>" : "\<lt>S-TAB>"<CR>
-        hi! link Pmenu AcpCompletionColorForward
+        execute "hi! link Pmenu " . g:acp_colorForward
     elseif l:direction == 2
         inoremap <TAB> <C-R>=pumvisible() ? "\<lt>C-P>" : "\<lt>TAB>"<CR>
         inoremap <S-TAB> <C-R>=pumvisible() ? "\<lt>C-N>" : "\<lt>S-TAB>"<CR>
-        hi! link Pmenu AcpCompletionColorReverse
+        execute "hi! link Pmenu " . g:acp_colorReverse
     else
         throw "acp: color/map adaption: Invalid direction argument"
     endif

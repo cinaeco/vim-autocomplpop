@@ -154,6 +154,16 @@ OPTIONS                                                          *acp-options*
 <
         If non-zero, "preview" is added to 'completeopt' when auto-popup.
 
+                                                 *g:acp_colorForward*  >
+  let g:acp_colorForward = 'AutoComplPopColorDefaultForward'
+<
+        The color to use for the background when doing forward completion.
+
+                                                 *g:acp_colorReverse*  >
+  let g:acp_colorReverse = 'AutoComplPopColorDefaultReverse'
+<
+        The color to use for the background when doing reverse completion.
+
                                         *g:acp_behaviorUserDefinedFunction*  >
   let g:acp_behaviorUserDefinedFunction = ''
 <

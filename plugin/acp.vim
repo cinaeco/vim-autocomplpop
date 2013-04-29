@@ -131,6 +131,8 @@ endfunction
 " }}}1
 "=============================================================================
 " INITIALIZATION {{{1
+hi AutoComplPopColorDefaultForward  ctermfg=Black ctermbg=Cyan guibg=LightCyan guifg=Black
+hi AutoComplPopColorDefaultReverse  ctermfg=Black ctermbg=Magenta guibg=LightMagenta guifg=Black
 
 "-----------------------------------------------------------------------------
 function! s:defineVariableDefault(var, value)
@@ -142,6 +144,8 @@ call s:defineVariableDefault('acp_ignorecaseOption', 1)
 call s:defineVariableDefault('acp_autoselectFirstCompletion', 1)
 call s:defineVariableDefault('acp_completeOption', '.,w,b,k')
 call s:defineVariableDefault('acp_completeoptPreview', 0)
+call s:defineVariableDefault('acp_colorForward', 'AutoComplPopColorDefaultForward')
+call s:defineVariableDefault('acp_colorReverse', 'AutoComplPopColorDefaultReverse')
 call s:defineVariableDefault('acp_behaviorUserDefinedFunction', '')
 call s:defineVariableDefault('acp_behaviorUserDefinedMeets', '')
 call s:defineVariableDefault('acp_behaviorSnipmateLength', -1)
