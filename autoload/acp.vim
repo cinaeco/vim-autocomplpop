@@ -256,6 +256,8 @@ function acp#pum_color_and_map_adaptions(force_direction)
     " 0 : no forcing, command conditional acp selection
     " 1 : force forward
     " 2 : force reverse
+
+    " Calculate the direction
     let l:direction = a:force_direction
     if a:force_direction == 0
         if s:behavsCurrent[s:iBehavs].command =~? "\<C-p>"
@@ -264,25 +266,31 @@ function acp#pum_color_and_map_adaptions(force_direction)
             let l:direction = 1
         endif
     endif
+
+    " Switch the mappings if requested
+    if l:direction == 2 && g:acp_reverseMappingInReverseMenu
+        let l:nextMap = g:acp_previousItemMapping
+        let l:prevMap = g:acp_nextItemMapping
+    else
+        let l:nextMap = g:acp_nextItemMapping
+        let l:prevMap = g:acp_previousItemMapping
+    endif
+    execute 'inoremap ' . l:nextMap[0]
+                \ . ' <C-R>=pumvisible() ? "\<lt>C-N>" : "'
+                \ . l:nextMap[1] . '"<CR>'
+    execute 'inoremap ' . l:prevMap[0]
+                \ . ' <C-R>=pumvisible() ? "\<lt>C-P>" : "'
+                \ . l:prevMap[1] . '"<CR>'
+
+    " Switch colors
     if l:direction == 1
-        execute 'inoremap ' . g:acp_nextItemMapping[0]
-                    \ . ' <C-R>=pumvisible() ? "\<lt>C-N>" : "'
-                    \ . g:acp_nextItemMapping[1] . '"<CR>'
-        execute 'inoremap ' . g:acp_previousItemMapping[0]
-                    \ . ' <C-R>=pumvisible() ? "\<lt>C-P>" : "'
-                    \ . g:acp_previousItemMapping[1] . '"<CR>'
         execute "hi! link Pmenu " . g:acp_colorForward
     elseif l:direction == 2
-        execute 'inoremap ' . g:acp_nextItemMapping[0]
-                    \ . ' <C-R>=pumvisible() ? "\<lt>C-P>" : "'
-                    \ . g:acp_nextItemMapping[1] . '"<CR>'
-        execute 'inoremap ' . g:acp_previousItemMapping[0]
-                    \ . ' <C-R>=pumvisible() ? "\<lt>C-N>" : "'
-                    \ . g:acp_previousItemMapping[1] . '"<CR>'
         execute "hi! link Pmenu " . g:acp_colorReverse
     else
         throw "acp: color/map adaption: Invalid direction argument"
     endif
+
     return ''
 endfunction
 

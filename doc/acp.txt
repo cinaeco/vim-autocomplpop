@@ -180,6 +180,11 @@ OPTIONS                                                          *acp-options*
         when the popup menu is not open.  It requires escaping according to
         *popupmenu-keys* (see pumvisible())
 
+                                                 *g:acp_reverseMappingInReverseMenu*  >
+  let g:acp_reverseMappingInReverseMenu = 1
+<
+        Reverse the next/previous mappings in a reverse menu (mainly <C-P>).
+
                                         *g:acp_behaviorUserDefinedFunction*  >
   let g:acp_behaviorUserDefinedFunction = ''
 <
