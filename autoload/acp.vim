@@ -347,9 +347,22 @@ function s:makeCurrentBehaviorSet()
 endfunction
 
 "
+function s:isInputAsMultibyte()
+  let line = getline('.')
+  let col = col('.')
+  echomsg line[col-3 : col-2]
+  return char2nr(line[col-2]) > 0x80
+        \  || line[col-3 : col-2] =~? '[kstnhmyrwgzdbpcfj][yh]'
+endfunction
+
+"
 function s:feedPopup()
   " NOTE: CursorMovedI is not triggered while the popup menu is visible. And
   "       it will be triggered when popup menu is disappeared.
+  if s:isInputAsMultibyte()
+    call s:finishPopup(1)
+    return ''
+  endif
   if s:lockCount > 0 || pumvisible() || &paste
     return ''
   endif
