@@ -4,9 +4,10 @@
 "=============================================================================
 " LOAD GUARD {{{1
 
-if !l9#guardScriptLoading(expand('<sfile>:p'), 0, 0, [])
+if exists('s:loaded_acp') && s:loaded_acp
   finish
 endif
+let s:loaded_acp = 1
 
 " }}}1
 "=============================================================================
@@ -367,20 +368,20 @@ function s:feedPopup()
   " popup menu is visible, another popup is not available unless input <C-e>
   " or try popup once. So first completion is duplicated.
   call insert(s:behavsCurrent, s:behavsCurrent[s:iBehavs])
-  call l9#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
+  call acp#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
         \ '&spell', 0)
-  call l9#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
+  call acp#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
         \ '&completeopt', 'menuone' . (g:acp_completeoptPreview ? ',preview' : ''))
-  call l9#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
+  call acp#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
         \ '&complete', g:acp_completeOption)
-  call l9#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
+  call acp#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
         \ '&ignorecase', g:acp_ignorecaseOption)
   " NOTE: With CursorMovedI driven, Set 'lazyredraw' to avoid flickering.
   "       With Mapping driven, set 'nolazyredraw' to make a popup menu visible.
-  call l9#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
+  call acp#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
         \ '&lazyredraw', !g:acp_mappingDriven)
   " NOTE: 'textwidth' must be restored after <C-e>.
-  call l9#tempvariables#set(s:TEMP_VARIABLES_GROUP1,
+  call acp#tempvariables#set(s:TEMP_VARIABLES_GROUP1,
         \ '&textwidth', 0)
   call s:setCompletefunc()
   call feedkeys(s:behavsCurrent[s:iBehavs].command . "\<C-r>=acp#onPopupPost()\<CR>", 'n')
@@ -392,16 +393,16 @@ function s:finishPopup(fGroup1)
   inoremap <C-h> <Nop> | iunmap <C-h>
   inoremap <BS>  <Nop> | iunmap <BS>
   let s:behavsCurrent = []
-  call l9#tempvariables#end(s:TEMP_VARIABLES_GROUP0)
+  call acp#tempvariables#end(s:TEMP_VARIABLES_GROUP0)
   if a:fGroup1
-    call l9#tempvariables#end(s:TEMP_VARIABLES_GROUP1)
+    call acp#tempvariables#end(s:TEMP_VARIABLES_GROUP1)
   endif
 endfunction
 
 "
 function s:setCompletefunc()
   if exists('s:behavsCurrent[s:iBehavs].completefunc')
-    call l9#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
+    call acp#tempvariables#set(s:TEMP_VARIABLES_GROUP0,
           \ '&completefunc', s:behavsCurrent[s:iBehavs].completefunc)
   endif
 endfunction
