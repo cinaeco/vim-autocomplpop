@@ -350,7 +350,6 @@ endfunction
 function s:isInputAsMultibyte()
   let line = getline('.')
   let col = col('.')
-  echomsg line[col-3 : col-2]
   return char2nr(line[col-2]) > 0x80
         \  || line[col-3 : col-2] =~? '[kstnhmyrwgzdbpcfj][yh]'
 endfunction
