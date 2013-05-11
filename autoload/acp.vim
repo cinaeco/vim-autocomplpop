@@ -325,11 +325,38 @@ function s:wantAlwaysReFeed()
     return 0
 endfun
 
+function s:getReFeedCheckpoints()
+    if exists("b:acp_refeed_checkpoints")
+        return b:acp_refeed_checkpoints
+    elseif exists("g:acp_refeed_checkpoints")
+        return g:acp_refeed_checkpoints
+    endif
+    return []
+endfun
+
+function s:isReFeedCheckpoint()
+    let l:all_checkpoints = s:getReFeedCheckpoints()
+    if empty(l:all_checkpoints)
+        return 0
+    endif
+    let l:current_alnum_word = matchstr(s:getCurrentText(), '\w*$')
+    let l:curren_alnum_length = strwidth(l:current_alnum_word)
+    for l:checkpoint in l:all_checkpoints
+        " There is a char about to be inserter (InsertCharPre)
+        if l:checkpoint == (l:curren_alnum_length + 1)
+            return 1
+        endif
+    endfor
+    return 0
+endfunction
 
 "
 function s:reFeedCond()
-    if s:wantAlwaysReFeed()
-        call s:feedPopup()
+    if s:wantAlwaysReFeed() || s:isReFeedCheckpoint()
+        if v:char != ' '
+            unlet! s:posLast s:lastUncompletable
+            call s:feedPopup()
+        endif
     endif
 endfun
 
@@ -445,9 +472,6 @@ function s:feedPopup()
     return ''
   endif
   if s:lockCount > 0 || &paste
-    return ''
-  endif
-  if !s:wantAlwaysReFeed() && pumvisible()
     return ''
   endif
   if exists('s:behavsCurrent[s:iBehavs].onPopupClose')
