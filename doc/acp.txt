@@ -301,24 +301,29 @@ OPTIONS                                                          *acp-options*
         |Dictionary| which has following items:
 
         "command":                                    *g:acp_behavior-command*
-          Command to be fed to open popup menu for completions.
+          Command to be fed to open popup menu for completions.  You can, for
+          example, trigger dictionary lookup by setting it to  "\<C-X><C-K>" or
+          trigger the 'completefunc' by setting it to "\<C-X><C-U>".
 
         "completefunc":                          *g:acp_behavior-completefunc*
           'completefunc' will be set to this user-provided function during the
-          completion. Only makes sense when "command" is "<C-x><C-u>".
+          completion. Only makes sense when "command" is "\<C-X><C-U>".
 
         "meets":                                        *g:acp_behavior-meets*
-          Name of the function which dicides whether or not to attempt this
+          Name of the function which decides whether or not to attempt this
           completion. It will be attempted if this function returns non-zero.
-          This function takes a text before the cursor.
+          This function is called with the text before the cursor.
 
         "onPopupClose":                          *g:acp_behavior-onPopupClose*
           Name of the function which is called when popup menu for this
           completion is closed. Following completions will be suppressed if
-          this function returns zero.
+          this function returns zero.  It is, for example, used to translate
+          the snipmate triggers into their expansion.
 
         "repeat":                                      *g:acp_behavior-repeat*
-          If non-zero, the last completion is automatically repeated.
+          If non-zero, the last completion is automatically repeated when the
+          popup menu closes.  If, for example, you have an omni completion that
+          can provide info after you type an opening parenthesis, set this to 1.
 
 
 ==============================================================================
