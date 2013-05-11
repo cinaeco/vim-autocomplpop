@@ -358,7 +358,7 @@ endfunction
 function s:feedPopup()
   " NOTE: CursorMovedI is not triggered while the popup menu is visible. And
   "       it will be triggered when popup menu is disappeared.
-  if s:isInputAsMultibyte()
+  if has('multi_byte') && s:isInputAsMultibyte()
     call s:finishPopup(1)
     return ''
   endif
