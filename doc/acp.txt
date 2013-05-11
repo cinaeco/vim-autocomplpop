@@ -185,6 +185,24 @@ OPTIONS                                                          *acp-options*
 <
         Reverse the next/previous mappings in a reverse menu (mainly <C-P>).
 
+                                                 *g:acp_refeed_after_every_char*  >
+  let g:acp_refeed_after_every_char = 0
+<
+        If you have completion functions that change content while the
+        completion menu is open, set this to 1.  After every inserted character
+        the menu will be updated.  Beware, this can be expensive and make the
+        insertion very slow.  Override it buffer locally with a 'b:' prefix
+        instead of the 'g:'.
+
+                                                 *g:acp_refeed_checkpoints*  >
+  let g:acp_refeed_checkpoints = []
+<
+        Similar to *g:acp_refeed_after_every_char* but update the menu at
+        particular word lengths.  The value is a list of word lengths.  Only
+        alphanumeric characters are considered when finding the length of the
+        word before the cursor.
+        Override it buffer locally with a 'b:' prefix instead of the 'g:'.
+
                                         *g:acp_behaviorUserDefinedFunction*  >
   let g:acp_behaviorUserDefinedFunction = ''
 <
