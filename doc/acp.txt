@@ -140,7 +140,7 @@ OPTIONS                                                          *acp-options*
         Value set to 'ignorecase' temporarily when auto-popup.
 
                                                    *g:acp_autoselectFirstCompletion*  >
-  let g:acp_autoselectFirstCompletion = 1
+  let g:acp_autoselectFirstCompletion = 0
 <
         Preselect the first completion in auto-popup.
 
