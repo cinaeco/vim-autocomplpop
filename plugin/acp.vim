@@ -151,6 +151,7 @@ call s:defineVariableDefault('acp_previousItemMapping', ['<S-TAB>', '\<lt>S-TAB>
 call s:defineVariableDefault('acp_reverseMappingInReverseMenu', 1)
 call s:defineVariableDefault('acp_refeed_after_every_char', 0)
 call s:defineVariableDefault('acp_refeed_checkpoints', [])
+call s:defineVariableDefault('acp_keyword_chars_for_checkpoint', '')
 call s:defineVariableDefault('acp_behaviorUserDefinedFunction', '')
 call s:defineVariableDefault('acp_behaviorUserDefinedMeets', '')
 call s:defineVariableDefault('acp_behaviorSnipmateLength', -1)

@@ -203,6 +203,14 @@ OPTIONS                                                          *acp-options*
         word before the cursor.
         Override it buffer locally with a 'b:' prefix instead of the 'g:'.
 
+                                                 *g:acp_keyword_chars_for_checkpoint*  >
+  let g:acp_keyword_chars_for_checkpoint = ''
+<
+        Include special characters when ACP counts the leading word length for
+        check points.  The special value '&iskeyword' will count all keyword
+        characters.
+        Override it buffer locally with a 'b:' prefix instead of the 'g:'.
+
                                         *g:acp_behaviorUserDefinedFunction*  >
   let g:acp_behaviorUserDefinedFunction = ''
 <

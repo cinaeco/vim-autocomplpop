@@ -310,6 +310,26 @@ endfunction
 "=============================================================================
 " LOCAL FUNCTIONS: {{{1
 
+function s:getKeywordCharConfig()
+    if exists("b:acp_keyword_chars_for_checkpoint")
+        return b:acp_keyword_chars_for_checkpoint
+    elseif exists("g:acp_keyword_chars_for_checkpoint")
+        return g:acp_keyword_chars_for_checkpoint
+    endif
+    return ''
+endfun
+
+function s:getCheckpointMatchPattern()
+    let l:additional_chars = s:getKeywordCharConfig()
+    if len(l:additional_chars) == 0
+        return '\w*$'
+    elseif l:additional_chars == '&iskeyword'
+        return '\k*$'
+    else
+        return '\(\w\|['. l:additional_chars . ']\)*$'
+        "return '[[:alnum:]_'. l:additional_chars . ']*$'
+endfun
+
 "
 function s:wantAlwaysReFeed()
     " user has requested to always refeed after every char
@@ -339,7 +359,8 @@ function s:isReFeedCheckpoint()
     if empty(l:all_checkpoints)
         return 0
     endif
-    let l:current_alnum_word = matchstr(s:getCurrentText(), '\w*$')
+    let l:pattern = s:getCheckpointMatchPattern()
+    let l:current_alnum_word = matchstr(s:getCurrentText(), l:pattern)
     let l:curren_alnum_length = strwidth(l:current_alnum_word)
     for l:checkpoint in l:all_checkpoints
         " There is a char about to be inserter (InsertCharPre)
