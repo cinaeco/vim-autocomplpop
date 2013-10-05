@@ -131,6 +131,8 @@ endfunction
 " }}}1
 "=============================================================================
 " INITIALIZATION {{{1
+hi AutoComplPopColorDefaultForward  ctermfg=Black ctermbg=Cyan guibg=LightCyan guifg=Black
+hi AutoComplPopColorDefaultReverse  ctermfg=Black ctermbg=Magenta guibg=LightMagenta guifg=Black
 
 "-----------------------------------------------------------------------------
 function! s:defineVariableDefault(var, value)
@@ -139,8 +141,17 @@ endfunction
 call s:defineVariableDefault('acp_enableAtStartup', 1)
 call s:defineVariableDefault('acp_mappingDriven', 0)
 call s:defineVariableDefault('acp_ignorecaseOption', 1)
+call s:defineVariableDefault('acp_autoselectFirstCompletion', 0)
 call s:defineVariableDefault('acp_completeOption', '.,w,b,k')
 call s:defineVariableDefault('acp_completeoptPreview', 0)
+call s:defineVariableDefault('acp_colorForward', 'AutoComplPopColorDefaultForward')
+call s:defineVariableDefault('acp_colorReverse', 'AutoComplPopColorDefaultReverse')
+call s:defineVariableDefault('acp_nextItemMapping', ['<TAB>', '\<lt>TAB>'])
+call s:defineVariableDefault('acp_previousItemMapping', ['<S-TAB>', '\<lt>S-TAB>'])
+call s:defineVariableDefault('acp_reverseMappingInReverseMenu', 1)
+call s:defineVariableDefault('acp_refeed_after_every_char', 0)
+call s:defineVariableDefault('acp_refeed_checkpoints', [])
+call s:defineVariableDefault('acp_keyword_chars_for_checkpoint', '')
 call s:defineVariableDefault('acp_behaviorUserDefinedFunction', '')
 call s:defineVariableDefault('acp_behaviorUserDefinedMeets', '')
 call s:defineVariableDefault('acp_behaviorSnipmateLength', -1)

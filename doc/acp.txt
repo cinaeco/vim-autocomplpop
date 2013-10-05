@@ -139,6 +139,11 @@ OPTIONS                                                          *acp-options*
 <
         Value set to 'ignorecase' temporarily when auto-popup.
 
+                                                   *g:acp_autoselectFirstCompletion*  >
+  let g:acp_autoselectFirstCompletion = 0
+<
+        Preselect the first completion in auto-popup.
+
                                                      *g:acp_completeOption*  >
   let g:acp_completeOption = '.,w,b,k'
 <
@@ -148,6 +153,63 @@ OPTIONS                                                          *acp-options*
   let g:acp_completeoptPreview = 0
 <
         If non-zero, "preview" is added to 'completeopt' when auto-popup.
+
+                                                 *g:acp_colorForward*  >
+  let g:acp_colorForward = 'AutoComplPopColorDefaultForward'
+<
+        The color to use for the background when doing forward completion.
+
+                                                 *g:acp_colorReverse*  >
+  let g:acp_colorReverse = 'AutoComplPopColorDefaultReverse'
+<
+        The color to use for the background when doing reverse completion.
+
+                                                 *g:acp_nextItem*  >
+  let g:acp_nextItem = ['<TAB>', '\<lt>TAB>']
+<
+        How to select the next item.  A list of two items where the first item
+        is the actual mapping, and the second an expression of what to do when
+        the popup menu is not open.  It requires escaping according to
+        *popupmenu-keys* (see pumvisible())
+
+                                                 *g:acp_previousItem*  >
+  let g:acp_previousItem = ['<S-TAB>', '\<lt>S-TAB>']
+<
+        How to select the previous item.  A list of two items where the first
+        item is the actual mapping, and the second an expression of what to do
+        when the popup menu is not open.  It requires escaping according to
+        *popupmenu-keys* (see pumvisible())
+
+                                                 *g:acp_reverseMappingInReverseMenu*  >
+  let g:acp_reverseMappingInReverseMenu = 1
+<
+        Reverse the next/previous mappings in a reverse menu (mainly <C-P>).
+
+                                                 *g:acp_refeed_after_every_char*  >
+  let g:acp_refeed_after_every_char = 0
+<
+        If you have completion functions that change content while the
+        completion menu is open, set this to 1.  After every inserted character
+        the menu will be updated.  Beware, this can be expensive and make the
+        insertion very slow.  Override it buffer locally with a 'b:' prefix
+        instead of the 'g:'.
+
+                                                 *g:acp_refeed_checkpoints*  >
+  let g:acp_refeed_checkpoints = []
+<
+        Similar to *g:acp_refeed_after_every_char* but update the menu at
+        particular word lengths.  The value is a list of word lengths.  Only
+        alphanumeric characters are considered when finding the length of the
+        word before the cursor.
+        Override it buffer locally with a 'b:' prefix instead of the 'g:'.
+
+                                                 *g:acp_keyword_chars_for_checkpoint*  >
+  let g:acp_keyword_chars_for_checkpoint = ''
+<
+        Include special characters when ACP counts the leading word length for
+        check points.  The special value '&iskeyword' will count all keyword
+        characters.
+        Override it buffer locally with a 'b:' prefix instead of the 'g:'.
 
                                         *g:acp_behaviorUserDefinedFunction*  >
   let g:acp_behaviorUserDefinedFunction = ''
@@ -265,24 +327,29 @@ OPTIONS                                                          *acp-options*
         |Dictionary| which has following items:
 
         "command":                                    *g:acp_behavior-command*
-          Command to be fed to open popup menu for completions.
+          Command to be fed to open popup menu for completions.  You can, for
+          example, trigger dictionary lookup by setting it to  "\<C-X><C-K>" or
+          trigger the 'completefunc' by setting it to "\<C-X><C-U>".
 
         "completefunc":                          *g:acp_behavior-completefunc*
           'completefunc' will be set to this user-provided function during the
-          completion. Only makes sense when "command" is "<C-x><C-u>".
+          completion. Only makes sense when "command" is "\<C-X><C-U>".
 
         "meets":                                        *g:acp_behavior-meets*
-          Name of the function which dicides whether or not to attempt this
+          Name of the function which decides whether or not to attempt this
           completion. It will be attempted if this function returns non-zero.
-          This function takes a text before the cursor.
+          This function is called with the text before the cursor.
 
         "onPopupClose":                          *g:acp_behavior-onPopupClose*
           Name of the function which is called when popup menu for this
           completion is closed. Following completions will be suppressed if
-          this function returns zero.
+          this function returns zero.  It is, for example, used to translate
+          the snipmate triggers into their expansion.
 
         "repeat":                                      *g:acp_behavior-repeat*
-          If non-zero, the last completion is automatically repeated.
+          If non-zero, the last completion is automatically repeated when the
+          popup menu closes.  If, for example, you have an omni completion that
+          can provide info after you type an opening parenthesis, set this to 1.
 
 
 ==============================================================================

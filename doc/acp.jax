@@ -138,6 +138,12 @@ AutoComplPop は perl-completion.vim
 <
         自動ポップアップ時に、'ignorecase' に一時的に設定する値
 
+                                                   *g:acp_autoselectFirstCompletion*  >
+  let g:acp_autoselectFirstCompletion = 1
+<
+        自動ポップアップの間、最初の完了を事前に選択する
+
+
                                                      *g:acp_completeOption*  >
   let g:acp_completeOption = '.,w,b,k'
 <

@@ -27,6 +27,7 @@ function acp#enable()
     call s:mapForMappingDriven()
   else
     autocmd AcpGlobalAutoCommand CursorMovedI * call s:feedPopup()
+    autocmd AcpGlobalAutoCommand InsertCharPre * call s:reFeedCond()
   endif
 
   nnoremap <silent> i i<C-r>=<SID>feedPopup()<CR>
@@ -122,8 +123,17 @@ endfunction
 
 "
 function acp#meetsForPythonOmni(context)
-  return has('python') && g:acp_behaviorPythonOmniLength >= 0 &&
-        \ a:context =~ '\k\.\k\{' . g:acp_behaviorPythonOmniLength . ',}$'
+  if !has('python') || g:acp_behaviorPythonOmniLength < 0
+    return 0
+  endif
+  if g:acp_behaviorPythonOmniLength == 0
+    return 1
+  endif
+  let matches = matchlist(a:context, '\(\(\k\|\.\|(\)\{' . g:acp_behaviorPythonOmniLength . ',}\)$')
+  if empty(matches)
+    return 0
+  endif
+  return 1
 endfunction
 
 "
@@ -215,13 +225,21 @@ function acp#onPopupPost()
   if pumvisible() && exists('s:behavsCurrent[s:iBehavs]')
     inoremap <silent> <expr> <C-h> acp#onBs()
     inoremap <silent> <expr> <BS>  acp#onBs()
+    let l:autoselect_up = ""
+    let l:autoselect_down = ""
+    if g:acp_autoselectFirstCompletion
+        let l:autoselect_up = "\<Up>"
+        let l:autoselect_down = "\<Down>"
+    endif
     " a command to restore to original text and select the first match
-    return (s:behavsCurrent[s:iBehavs].command =~# "\<C-p>" ? "\<C-n>\<Up>"
-          \                                                 : "\<C-p>\<Down>")
+    return (s:behavsCurrent[s:iBehavs].command =~# "\<C-p>"
+          \             ? "\<C-n>" . l:autoselect_up
+          \             : "\<C-p>" . l:autoselect_down)
   endif
   let s:iBehavs += 1
   if len(s:behavsCurrent) > s:iBehavs 
     call s:setCompletefunc()
+    call acp#pum_color_and_map_adaptions(0)
     return printf("\<C-e>%s\<C-r>=acp#onPopupPost()\<CR>",
           \       s:behavsCurrent[s:iBehavs].command)
   else
@@ -232,6 +250,49 @@ function acp#onPopupPost()
     call s:finishPopup(0)
     return "\<C-e>"
   endif
+endfunction
+
+function acp#pum_color_and_map_adaptions(force_direction)
+    " force_direction
+    " 0 : no forcing, command conditional acp selection
+    " 1 : force forward
+    " 2 : force reverse
+
+    " Calculate the direction
+    let l:direction = a:force_direction
+    if a:force_direction == 0
+        if s:behavsCurrent[s:iBehavs].command =~? "\<C-p>"
+            let l:direction = 2
+        else
+            let l:direction = 1
+        endif
+    endif
+
+    " Switch the mappings if requested
+    if l:direction == 2 && g:acp_reverseMappingInReverseMenu
+        let l:nextMap = g:acp_previousItemMapping
+        let l:prevMap = g:acp_nextItemMapping
+    else
+        let l:nextMap = g:acp_nextItemMapping
+        let l:prevMap = g:acp_previousItemMapping
+    endif
+    execute 'inoremap ' . l:nextMap[0]
+                \ . ' <C-R>=pumvisible() ? "\<lt>C-N>" : "'
+                \ . l:nextMap[1] . '"<CR>'
+    execute 'inoremap ' . l:prevMap[0]
+                \ . ' <C-R>=pumvisible() ? "\<lt>C-P>" : "'
+                \ . l:prevMap[1] . '"<CR>'
+
+    " Switch colors
+    if l:direction == 1
+        execute "hi! link Pmenu " . g:acp_colorForward
+    elseif l:direction == 2
+        execute "hi! link Pmenu " . g:acp_colorReverse
+    else
+        throw "acp: color/map adaption: Invalid direction argument"
+    endif
+
+    return ''
 endfunction
 
 "
@@ -248,6 +309,77 @@ endfunction
 " }}}1
 "=============================================================================
 " LOCAL FUNCTIONS: {{{1
+
+function s:getKeywordCharConfig()
+    if exists("b:acp_keyword_chars_for_checkpoint")
+        return b:acp_keyword_chars_for_checkpoint
+    elseif exists("g:acp_keyword_chars_for_checkpoint")
+        return g:acp_keyword_chars_for_checkpoint
+    endif
+    return ''
+endfun
+
+function s:getCheckpointMatchPattern()
+    let l:additional_chars = s:getKeywordCharConfig()
+    if len(l:additional_chars) == 0
+        return '\w*$'
+    elseif l:additional_chars == '&iskeyword'
+        return '\k*$'
+    else
+        return '\(\w\|['. l:additional_chars . ']\)*$'
+        "return '[[:alnum:]_'. l:additional_chars . ']*$'
+endfun
+
+"
+function s:wantAlwaysReFeed()
+    " user has requested to always refeed after every char
+    if exists("b:acp_refeed_after_every_char")
+        if b:acp_refeed_after_every_char
+            return 1
+        endif
+    elseif exists("g:acp_refeed_after_every_char")
+        if g:acp_refeed_after_every_char
+            return 1
+        endif
+    endif
+    return 0
+endfun
+
+function s:getReFeedCheckpoints()
+    if exists("b:acp_refeed_checkpoints")
+        return b:acp_refeed_checkpoints
+    elseif exists("g:acp_refeed_checkpoints")
+        return g:acp_refeed_checkpoints
+    endif
+    return []
+endfun
+
+function s:isReFeedCheckpoint()
+    let l:all_checkpoints = s:getReFeedCheckpoints()
+    if empty(l:all_checkpoints)
+        return 0
+    endif
+    let l:pattern = s:getCheckpointMatchPattern()
+    let l:current_alnum_word = matchstr(s:getCurrentText(), l:pattern)
+    let l:curren_alnum_length = strwidth(l:current_alnum_word)
+    for l:checkpoint in l:all_checkpoints
+        " There is a char about to be inserter (InsertCharPre)
+        if l:checkpoint == (l:curren_alnum_length + 1)
+            return 1
+        endif
+    endfor
+    return 0
+endfunction
+
+"
+function s:reFeedCond()
+    if s:wantAlwaysReFeed() || s:isReFeedCheckpoint()
+        if v:char != ' '
+            unlet! s:posLast s:lastUncompletable
+            call s:feedPopup()
+        endif
+    endif
+endfun
 
 "
 function s:mapForMappingDriven()
@@ -360,7 +492,7 @@ function s:feedPopup()
     call s:finishPopup(1)
     return ''
   endif
-  if s:lockCount > 0 || pumvisible() || &paste
+  if s:lockCount > 0 || &paste
     return ''
   endif
   if exists('s:behavsCurrent[s:iBehavs].onPopupClose')
@@ -393,6 +525,9 @@ function s:feedPopup()
   " NOTE: 'textwidth' must be restored after <C-e>.
   call acp#tempvariables#set(s:TEMP_VARIABLES_GROUP1,
         \ '&textwidth', 0)
+
+  call acp#pum_color_and_map_adaptions(0)
+
   call s:setCompletefunc()
   call feedkeys(s:behavsCurrent[s:iBehavs].command . "\<C-r>=acp#onPopupPost()\<CR>", 'n')
   return '' " this function is called by <C-r>=
