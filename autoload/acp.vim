@@ -27,7 +27,9 @@ function acp#enable()
     call s:mapForMappingDriven()
   else
     autocmd AcpGlobalAutoCommand CursorMovedI * call s:feedPopup()
-    autocmd AcpGlobalAutoCommand InsertCharPre * call s:reFeedCond()
+    if exists('##InsertCharPre')
+        autocmd AcpGlobalAutoCommand InsertCharPre * call s:reFeedCond()
+    endif 
   endif
 
   nnoremap <silent> i i<C-r>=<SID>feedPopup()<CR>
